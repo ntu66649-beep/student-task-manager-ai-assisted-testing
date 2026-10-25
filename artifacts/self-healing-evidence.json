@@ -1,0 +1,8 @@
+{
+  "analyzedAt": "2026-10-22T06:17:15.612Z",
+  "testCase": "TC08: Create a new task successfully via modal dialog",
+  "brokenSelector": "#btn-add-task-broken",
+  "discoveredDomId": "#btn-new-task",
+  "semanticLocator": "page.getByRole('button', { name: 'Tạo nhiệm vụ' })",
+  "errorMessage": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('#btn-add-task-broken')"
+}

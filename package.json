@@ -1,0 +1,39 @@
+{
+  "name": "student-task-manager-ai-assisted-testing",
+  "version": "1.0.0",
+  "description": "Student Task Manager – AI-Assisted Testing with Playwright, Playwright MCP & Antigravity for SWT301",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test:api": "node test/api.test.js",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "mcp:explore": "node scripts/mcp-explore.js",
+    "demo:break-locator": "node scripts/self-healing-demo.js break",
+    "demo:analyze-locator": "node scripts/self-healing-demo.js analyze",
+    "demo:fix-locator": "node scripts/self-healing-demo.js fix",
+    "demo:status": "node scripts/self-healing-demo.js status"
+  },
+  "keywords": [
+    "swt301",
+    "ai-assisted-testing",
+    "playwright",
+    "playwright-mcp",
+    "antigravity",
+    "e2e-testing"
+  ],
+  "author": "SWT301 Group",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@playwright/mcp": "latest",
+    "@playwright/test": "^1.50.0"
+  }
+}

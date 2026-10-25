@@ -1,0 +1,5 @@
+{
+  "name": "playwright-mcp",
+  "version": "1.0.0",
+  "description": "Microsoft Official Playwright MCP integration for AI-Assisted E2E Testing in Antigravity"
+}

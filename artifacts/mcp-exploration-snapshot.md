@@ -1,0 +1,278 @@
+# Bằng chứng Khám phá Website thực tế qua Microsoft Playwright MCP
+
+- **Thời gian thực thi:** 2026-10-22T06:25:19.284Z
+- **MCP Server:** `@playwright/mcp` (Microsoft Official Playwright MCP)
+- **Giao thức:** Model Context Protocol (Stdio Transport)
+- **Số lượng MCP Tools phát hiện:** 25 tools (`browser_close`, `browser_resize`, `browser_console_messages`, `browser_handle_dialog`, `browser_emulate_media`, `browser_evaluate`, `browser_file_upload`, `browser_drop`, `browser_find`, `browser_fill_form`, `browser_press_key`, `browser_type`, `browser_navigate`, `browser_navigate_back`, `browser_network_requests`, `browser_network_request`, `browser_run_code_unsafe`, `browser_take_screenshot`, `browser_snapshot`, `browser_click`, `browser_drag`, `browser_hover`, `browser_select_option`, `browser_tabs`, `browser_wait_for`)
+
+---
+
+## 1. Accessibility Snapshot - Màn hình Đăng nhập (`GET /`)
+
+```yaml
+### Page
+- Page URL: http://localhost:62867/
+- Page Title: Student Task Manager · Không gian học tập
+### Snapshot
+```yaml
+- generic [active] [ref=e1]:
+  - link "Đến nội dung chính" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - button "Chuyển sang giao diện tối" [ref=e3] [cursor=pointer]: ◐
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - link "Student Task Manager" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: ✓
+        - generic [ref=e8]: Student / Task Manager
+      - generic [ref=e9]:
+        - text: MỖI NGÀY, TIẾN THÊM MỘT BƯỚC
+        - heading [level=1] [ref=e10]:
+          - text: Ít bỏ lỡ.Nhiều
+          - emphasis [ref=e11]: hoàn thành.
+        - paragraph [ref=e12]: Một không gian gọn gàng cho bài tập, môn học và những mục tiêu đang chờ bạn chinh phục.
+      - generic [aria-hidden] [ref=e13]:
+        - generic [ref=e16]:
+          - generic [ref=e17]: ✓
+          - generic [ref=e18]:
+            - generic [ref=e19]: THÊM MỘT VIỆC ĐÃ XONG
+            - strong [ref=e20]: Sẵn sàng cho buổi học tiếp theo
+            - text: Từng nhiệm vụ nhỏ. Một bước tiến lớn.
+        - generic [ref=e21]: Plan. Focus. Finish.
+      - generic [ref=e22]:
+        - generic [ref=e23]: Không gian học tập của bạn
+        - generic [ref=e24]: 01 — Bắt đầu
+    - generic [ref=e26]:
+      - text: CHÀO MỪNG TRỞ LẠI
+      - heading "Bắt đầu một ngày có kế hoạch." [level=2] [ref=e27]: Bắt đầu một ngàycó kế hoạch.
+      - paragraph [ref=e28]: Đăng nhập để tiếp tục các nhiệm vụ của bạn.
+      - generic [ref=e29]:
+        - generic [ref=e30]: Tên đăng nhập
+        - textbox "Tên đăng nhập" [ref=e31]: student
+        - generic [ref=e32]: Mật khẩu
+        - generic [ref=e33]:
+          - textbox "Mật khẩu" [ref=e34]: password123
+          - button "Hiện mật khẩu" [ref=e35] [cursor=pointer]: Hiện
+        - button "Vào không gian học tập" [ref=e36] [cursor=pointer]:
+          - text: Vào không gian học tập
+          - generic [aria-hidden] [ref=e37]: ↗
+      - generic [ref=e38]:
+        - text: TÀI KHOẢN TRẢI NGHIỆM
+        - paragraph [ref=e39]:
+          - strong [ref=e40]: student
+          - text: /
+          - strong [ref=e41]: password123
+        - text: Thông tin đã điền sẵn để bạn khám phá.
+      - paragraph [ref=e42]: Student Task Manager · SWT301
+```
+```
+
+---
+
+## 2. Accessibility Snapshot - Màn hình Không gian học tập sau khi AI bấm Đăng nhập (`browser_click`)
+
+```yaml
+### Page
+- Page URL: http://localhost:62867/
+- Page Title: Tổng quan · Student Task Manager
+### Snapshot
+```yaml
+- generic [ref=e1]:
+  - link "Đến nội dung chính" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - button "Chuyển sang giao diện tối" [ref=e3] [cursor=pointer]: ◐
+  - generic [ref=e43]:
+    - complementary "Điều hướng chính" [ref=e44]:
+      - link "✓ Student TASK MANAGER" [ref=e45] [cursor=pointer]:
+        - /url: "#overview"
+        - generic [ref=e46]: ✓
+        - generic [ref=e47]:
+          - text: Student
+          - generic [ref=e48]: TASK MANAGER
+      - generic [ref=e49]: KHÔNG GIAN HỌC TẬP
+      - navigation [ref=e50]:
+        - link "Tổng quan" [ref=e51] [cursor=pointer]:
+          - /url: "#overview"
+          - generic [aria-hidden] [ref=e52]: ◫
+          - text: Tổng quan
+        - link "Nhiệm vụ 2" [ref=e53] [cursor=pointer]:
+          - /url: "#tasks"
+          - generic [aria-hidden] [ref=e54]: ☷
+          - text: Nhiệm vụ
+          - generic [ref=e55]: "2"
+        - link "Đã hoàn thành" [ref=e56] [cursor=pointer]:
+          - /url: "#completed"
+          - generic [aria-hidden] [ref=e57]: ✓
+          - text: Đã hoàn thành
+      - generic [ref=e58]:
+        - text: TẬP TRUNG VÀO ĐIỀU QUAN TRỌNG
+        - paragraph [ref=e59]: Một việc mỗi lúc.Một chút tốt hơn mỗi ngày.
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]: VA
+          - generic [ref=e64]:
+            - strong [ref=e65]: Nguyen Van A
+            - generic [ref=e66]: student@fpt.edu.vn
+        - button "Đăng xuất" [ref=e67] [cursor=pointer]:
+          - text: Đăng xuất
+          - generic [aria-hidden] [ref=e68]: ↗
+    - main [active] [ref=e69]:
+      - generic [ref=e70]:
+        - generic [ref=e71]:
+          - text: Không gian học tập /
+          - strong [ref=e72]: Tổng quan
+        - generic [ref=e73]: Thứ 5, 22 tháng 10, 2026
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - text: MỘT NGÀY MỚI, MỘT BƯỚC TIẾN
+          - heading "Việc học, trong tầm tay." [level=1] [ref=e76]
+          - paragraph [ref=e77]: Nhìn lại tiến độ và chọn điều bạn muốn hoàn thành tiếp theo.
+        - button "Tạo nhiệm vụ" [ref=e78] [cursor=pointer]:
+          - generic [aria-hidden] [ref=e79]: ＋
+          - text: Tạo nhiệm vụ
+      - region "Thống kê nhiệm vụ" [ref=e80]:
+        - button [ref=e81] [cursor=pointer]:
+          - generic [ref=e82]:
+            - text: Tổng nhiệm vụ
+            - generic [aria-hidden] [ref=e83]: ↗
+          - strong [ref=e84]: "3"
+          - text: Trong không gian của bạn
+        - button [ref=e85] [cursor=pointer]:
+          - generic [ref=e86]: Cần bắt đầu
+          - strong [ref=e88]: "1"
+          - text: Sẵn sàng cho bước đầu tiên
+        - button [ref=e89] [cursor=pointer]:
+          - generic [ref=e90]: Đang thực hiện
+          - strong [ref=e92]: "1"
+          - text: Giữ nhịp, bạn đang tiến bộ
+        - button [ref=e93] [cursor=pointer]:
+          - generic [ref=e94]:
+            - text: Đã hoàn thành
+            - generic [aria-hidden] [ref=e95]: ✓
+          - strong [ref=e96]: "1"
+          - text: 33% mục tiêu đã hoàn thành
+      - region "Tổng quan tiến độ" [ref=e97]:
+        - generic [ref=e98]:
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - text: TỪNG BƯỚC MỘT
+              - heading "Nhịp học tập của bạn" [level=2] [ref=e101]
+            - generic [ref=e102]: Tiến độ hiện tại
+          - generic [ref=e103]:
+            - img "1 trên 3 nhiệm vụ đã hoàn thành, 33%" [ref=e104]:
+              - generic [ref=e105]:
+                - strong [ref=e106]: 33%
+                - generic [ref=e107]: hoàn thành
+            - generic [ref=e108]:
+              - button "Cần làm 1" [ref=e109] [cursor=pointer]:
+                - generic [ref=e110]:
+                  - text: Cần làm
+                  - generic [ref=e112]: "1"
+              - button "Đang làm 1" [ref=e115] [cursor=pointer]:
+                - generic [ref=e116]:
+                  - text: Đang làm
+                  - generic [ref=e118]: "1"
+              - button "Hoàn thành 1" [ref=e121] [cursor=pointer]:
+                - generic [ref=e122]:
+                  - text: Hoàn thành
+                  - generic [ref=e124]: "1"
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - text: ƯU TIÊN TIẾP THEO
+              - heading "Điều cần chú ý" [level=2] [ref=e130]
+            - generic [aria-hidden] [ref=e131]: ↗
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - generic [ref=e134]:
+                - strong [ref=e135]: "01"
+                - generic [ref=e136]: nhiệm vụ quá hạn
+              - generic [ref=e137]:
+                - strong [ref=e138]: "01"
+                - generic [ref=e139]: nhiệm vụ ưu tiên cao
+            - paragraph [ref=e140]:
+              - text: "Gợi ý tiếp theo:"
+              - strong [ref=e141]: On tap ly thuyet SWT301
+          - button "Xem nhiệm vụ cần chú ý" [ref=e142] [cursor=pointer]:
+            - text: Xem nhiệm vụ cần chú ý
+            - generic [aria-hidden] [ref=e143]: →
+      - region [ref=e144]:
+        - generic [ref=e145]:
+          - generic [ref=e146]:
+            - heading "Nhiệm vụ của bạn" [level=2] [ref=e147]
+            - paragraph [ref=e148]: 3 / 3 nhiệm vụ
+          - generic [ref=e149]:
+            - button "Làm mới nhiệm vụ" [ref=e150] [cursor=pointer]: ↻
+            - group "Cách hiển thị" [ref=e151]:
+              - button "Dạng danh sách" [pressed] [ref=e152] [cursor=pointer]: ☷
+              - button "Dạng bảng" [ref=e153] [cursor=pointer]: ◫
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - generic [aria-hidden] [ref=e156]: ⌕
+            - searchbox "Tìm nhiệm vụ" [ref=e157]
+          - combobox "Lọc trạng thái" [ref=e158]:
+            - option "Tất cả trạng thái" [selected]
+            - option "Cần làm"
+            - option "Đang làm"
+            - option "Hoàn thành"
+          - combobox "Lọc ưu tiên" [ref=e159]:
+            - option "Tất cả ưu tiên" [selected]
+            - option "Ưu tiên cao"
+            - option "Trung bình"
+            - option "Ưu tiên thấp"
+          - combobox "Sắp xếp nhiệm vụ" [ref=e160]:
+            - option "Cần chú ý trước" [selected]
+            - option "Hạn gần nhất"
+            - option "Mới nhất"
+            - option "Tên A–Z"
+        - generic [ref=e161]:
+          - article [ref=e162]:
+            - 'button "Bắt đầu nhiệm vụ: On tap ly thuyet SWT301" [ref=e163] [cursor=pointer]'
+            - generic [ref=e164]:
+              - button "On tap ly thuyet SWT301" [ref=e165] [cursor=pointer]
+              - paragraph [ref=e166]: Hoc lai cac ky thuat kiem thu hop den (Black-box testing) va hop trang (White-box testing)
+              - generic [ref=e167]:
+                - generic [ref=e168]: SWT301
+                - generic [ref=e169]: Ưu tiên cao
+            - generic [ref=e170]: Cần làm
+            - generic [ref=e171]:
+              - text: 20/10/2026
+              - generic [ref=e172]: Quá hạn
+            - generic [ref=e173]:
+              - 'button "Sửa nhiệm vụ: On tap ly thuyet SWT301" [ref=e174] [cursor=pointer]': Sửa
+              - 'button "Xóa nhiệm vụ: On tap ly thuyet SWT301" [ref=e175] [cursor=pointer]': Xóa
+          - article [ref=e176]:
+            - 'button "Hoàn thành nhiệm vụ: Cai dat Postman va Newman" [ref=e177] [cursor=pointer]': ◔
+            - generic [ref=e178]:
+              - button "Cai dat Postman va Newman" [ref=e179] [cursor=pointer]
+              - paragraph [ref=e180]: Chuan bi moi truong de kiem thu API tu dong
+              - generic [ref=e181]:
+                - generic [ref=e182]: SWT301
+                - generic [ref=e183]: Ưu tiên trung bình
+            - generic [ref=e184]: Đang làm
+            - generic [ref=e185]:
+              - text: 22/10/2026
+              - generic [ref=e186]: Đến hạn hôm nay
+            - generic [ref=e187]:
+              - 'button "Sửa nhiệm vụ: Cai dat Postman va Newman" [ref=e188] [cursor=pointer]': Sửa
+              - 'button "Xóa nhiệm vụ: Cai dat Postman va Newman" [ref=e189] [cursor=pointer]': Xóa
+          - article [ref=e190]:
+            - 'button "Mở lại nhiệm vụ: Lam bai tap Assignment 1" [ref=e191] [cursor=pointer]': ✓
+            - generic [ref=e192]:
+              - button "Lam bai tap Assignment 1" [ref=e193] [cursor=pointer]
+              - paragraph [ref=e194]: Viet test case va tao Postman Collection cho he thong quan ly nhiem vu sinh vien
+              - generic [ref=e195]:
+                - generic [ref=e196]: SWT301
+                - generic [ref=e197]: Ưu tiên cao
+            - generic [ref=e198]: Hoàn thành
+            - generic [ref=e199]:
+              - text: 25/10/2026
+              - generic [ref=e200]: Đã hoàn thành
+            - generic [ref=e201]:
+              - 'button "Sửa nhiệm vụ: Lam bai tap Assignment 1" [ref=e202] [cursor=pointer]': Sửa
+              - 'button "Xóa nhiệm vụ: Lam bai tap Assignment 1" [ref=e203] [cursor=pointer]': Xóa
+      - generic [ref=e204]:
+        - generic [ref=e205]: Student Task Manager · SWT301
+        - generic [ref=e206]: Đồng bộ lúc 13:25
+```
+```
