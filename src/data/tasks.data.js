@@ -47,13 +47,13 @@ const mockTasks = [
 ];
 
 // In-memory working copy
-let tasks = [...mockTasks];
+let tasks = JSON.parse(JSON.stringify(mockTasks));
 let nextTaskId = 4;
 
 const VALID_TOKEN = "mock-token-swt301-xyz123";
 
 const resetData = () => {
-  tasks = JSON.parse(JSON.stringify(mockTasks));
+  tasks.splice(0, tasks.length, ...JSON.parse(JSON.stringify(mockTasks)));
   nextTaskId = 4;
 };
 
