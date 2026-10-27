@@ -3,13 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#132b34" />
+    <meta name="theme-color" content="#7357d9" />
+    <meta
+      name="description"
+      content="Lên kế hoạch học tập, theo dõi deadline và hoàn thành từng mục tiêu cùng Student Task Manager."
+    />
     <title>Student Task Manager · Không gian học tập</title>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%23e9a76b'/%3E%3Cpath d='m12 25 8 8 17-19' fill='none' stroke='%23132b34' stroke-width='5'/%3E%3C/svg%3E"
     />
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/workspace.css" />
     <script src="/js/app.js" defer></script>
   </head>
   <body>
@@ -31,14 +36,17 @@
           ></a
         >
         <div class="story-copy">
-          <span class="eyebrow">MỖI NGÀY, TIẾN THÊM MỘT BƯỚC</span>
-          <h1>Ít bỏ lỡ.<br />Nhiều <em>hoàn thành.</em></h1>
+          <span class="eyebrow story-badge"
+            >✦ KHÔNG GIAN CHO NHỮNG MỤC TIÊU LỚN</span
+          >
+          <h1>Học có kế hoạch.<br />Tiến bộ <em>mỗi ngày.</em></h1>
           <p>
             Một không gian gọn gàng cho bài tập, môn học và những mục tiêu đang
             chờ bạn chinh phục.
           </p>
         </div>
         <div class="story-visual" aria-hidden="true">
+          <div class="study-decoration">✦</div>
           <div class="orbit orbit-one"></div>
           <div class="orbit orbit-two"></div>
           <div class="sample-task">
@@ -49,7 +57,7 @@
               ><span>Từng nhiệm vụ nhỏ. Một bước tiến lớn.</span>
             </div>
           </div>
-          <span class="visual-note">Plan. Focus. Finish.</span>
+          <span class="visual-note">Một kế hoạch nhỏ. Một ngày thật tốt.</span>
         </div>
         <div class="story-footer">
           <span>Không gian học tập của bạn</span><span>01 — Bắt đầu</span>
@@ -128,6 +136,12 @@
             ><span aria-hidden="true">✓</span>Đã hoàn thành</a
           >
         </nav>
+        <div class="sidebar-courses">
+          <div class="workspace-label">MÔN HỌC CỦA BẠN</div>
+          <div id="course-shortcuts">
+            <p class="muted">Đang tải môn học…</p>
+          </div>
+        </div>
         <div class="sidebar-note">
           <span class="small-label">TẬP TRUNG VÀO ĐIỀU QUAN TRỌNG</span>
           <p>Một việc mỗi lúc.<br />Một chút tốt hơn mỗi ngày.</p>
@@ -167,6 +181,161 @@
             <span aria-hidden="true">＋</span> Tạo nhiệm vụ
           </button>
         </div>
+        <section
+          class="welcome-banner"
+          id="welcome-banner"
+          aria-label="Kế hoạch hôm nay"
+        >
+          <div class="welcome-copy">
+            <span class="welcome-badge"
+              ><span class="dot"></span> CÙNG BẠN TIẾN BỘ MỖI NGÀY</span
+            >
+            <h2>
+              Chào bạn, <span id="greeting-name">sinh viên</span>
+              <span aria-hidden="true">✦</span>
+            </h2>
+            <p id="welcome-summary" aria-live="polite">
+              Kế hoạch hôm nay bắt đầu từ một nhiệm vụ nhỏ.
+            </p>
+            <button class="button banner-button" id="plan-today">
+              Bắt đầu tập trung <span aria-hidden="true">→</span>
+            </button>
+          </div>
+          <svg
+            class="planner-art"
+            viewBox="0 0 280 180"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle cx="154" cy="94" r="78" fill="white" fill-opacity=".08" />
+            <circle
+              cx="154"
+              cy="94"
+              r="61"
+              stroke="white"
+              stroke-opacity=".18"
+              stroke-dasharray="4 7"
+            />
+            <g transform="rotate(9 158 90)">
+              <rect
+                x="91"
+                y="23"
+                width="128"
+                height="141"
+                rx="13"
+                fill="#cfc3fa"
+              />
+            </g>
+            <g transform="rotate(-7 143 91)">
+              <rect
+                x="72"
+                y="17"
+                width="134"
+                height="146"
+                rx="13"
+                fill="#fff"
+              />
+              <rect
+                x="88"
+                y="37"
+                width="61"
+                height="7"
+                rx="3.5"
+                fill="#d8cff5"
+              />
+              <rect x="88" y="51" width="88" height="4" rx="2" fill="#efebfb" />
+              <rect
+                x="88"
+                y="72"
+                width="17"
+                height="17"
+                rx="5"
+                fill="#ede8fb"
+              />
+              <path
+                d="m92 80 3 3 6-7"
+                stroke="#7856dc"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <rect
+                x="115"
+                y="75"
+                width="66"
+                height="5"
+                rx="2.5"
+                fill="#b7a6e6"
+              />
+              <rect
+                x="115"
+                y="85"
+                width="47"
+                height="3"
+                rx="1.5"
+                fill="#e9e2f8"
+              />
+              <rect
+                x="88"
+                y="103"
+                width="17"
+                height="17"
+                rx="5"
+                fill="#ede8fb"
+              />
+              <path
+                d="m92 111 3 3 6-7"
+                stroke="#7856dc"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <rect
+                x="115"
+                y="106"
+                width="54"
+                height="5"
+                rx="2.5"
+                fill="#b7a6e6"
+              />
+              <rect
+                x="115"
+                y="116"
+                width="63"
+                height="3"
+                rx="1.5"
+                fill="#e9e2f8"
+              />
+              <rect
+                x="88"
+                y="136"
+                width="89"
+                height="5"
+                rx="2.5"
+                fill="#efebfb"
+              />
+              <rect
+                x="88"
+                y="136"
+                width="58"
+                height="5"
+                rx="2.5"
+                fill="#a68be9"
+              />
+            </g>
+            <circle cx="213" cy="126" r="24" fill="#d3f2d8" />
+            <path
+              d="m202 126 7 7 15-17"
+              stroke="#418765"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path d="m49 43 3-9 3 9 9 3-9 3-3 9-3-9-9-3 9-3Z" fill="#e4d398" />
+            <circle cx="231" cy="36" r="4" fill="#d9cdf9" />
+            <circle cx="49" cy="129" r="5" fill="#d9cdf9" />
+          </svg>
+        </section>
         <section class="stats-grid" aria-label="Thống kê nhiệm vụ">
           <button class="stat-card" data-stat="">
             <span>Tổng nhiệm vụ <i aria-hidden="true">↗</i></span
@@ -186,135 +355,224 @@
             ><small id="completion-caption">Chưa có dữ liệu</small>
           </button>
         </section>
-        <section
-          class="insights-grid"
-          id="insights"
-          aria-label="Tổng quan tiến độ"
-        >
-          <div class="panel progress-panel">
-            <div class="panel-heading">
-              <div>
-                <span class="small-label muted">TỪNG BƯỚC MỘT</span>
-                <h2>Nhịp học tập của bạn</h2>
-              </div>
-              <span class="pill">Tiến độ hiện tại</span>
-            </div>
-            <div class="progress-content">
-              <div
-                class="progress-ring"
-                id="progress-ring"
-                role="img"
-                aria-label="Chưa có dữ liệu"
-              >
-                <div>
-                  <strong id="progress-percent">0%</strong
-                  ><small>hoàn thành</small>
+        <div class="dashboard-grid">
+          <div class="dashboard-main">
+            <section
+              class="insights-grid"
+              id="insights"
+              aria-label="Tổng quan tiến độ"
+            >
+              <div class="panel progress-panel">
+                <div class="panel-heading">
+                  <div>
+                    <span class="small-label muted">TỪNG BƯỚC MỘT</span>
+                    <h2>Nhịp học tập của bạn</h2>
+                  </div>
+                  <span class="pill">Tiến độ hiện tại</span>
+                </div>
+                <div class="progress-content">
+                  <div
+                    class="progress-ring"
+                    id="progress-ring"
+                    role="img"
+                    aria-label="Chưa có dữ liệu"
+                  >
+                    <div>
+                      <strong id="progress-percent">0%</strong
+                      ><small>hoàn thành</small>
+                    </div>
+                  </div>
+                  <div class="status-chart" id="status-chart"></div>
                 </div>
               </div>
-              <div class="status-chart" id="status-chart"></div>
-            </div>
-          </div>
-          <div class="panel focus-panel">
-            <div class="panel-heading">
-              <div>
-                <span class="small-label muted">ƯU TIÊN TIẾP THEO</span>
-                <h2>Điều cần chú ý</h2>
-              </div>
-              <span class="focus-icon" aria-hidden="true">↗</span>
-            </div>
-            <div id="focus-content"></div>
-            <button class="text-button" id="view-urgent">
-              Xem nhiệm vụ cần chú ý <span aria-hidden="true">→</span>
-            </button>
-          </div>
-        </section>
-        <section class="panel tasks-panel" aria-labelledby="tasks-heading">
-          <div class="panel-heading task-panel-heading">
-            <div>
-              <h2 id="tasks-heading">Nhiệm vụ của bạn</h2>
-              <p class="muted" id="result-count" aria-live="polite">
-                Đang tải dữ liệu…
-              </p>
-            </div>
-            <div class="task-tools">
-              <button
-                class="icon-button"
-                id="btn-refresh-tasks"
-                aria-label="Làm mới nhiệm vụ"
-                title="Làm mới nhiệm vụ"
-              >
-                ↻
-              </button>
-              <div class="view-switch" role="group" aria-label="Cách hiển thị">
-                <button
-                  data-view="list"
-                  aria-pressed="true"
-                  aria-label="Dạng danh sách"
-                  title="Danh sách"
-                >
-                  ☷</button
-                ><button
-                  data-view="board"
-                  aria-pressed="false"
-                  aria-label="Dạng bảng"
-                  title="Bảng trạng thái"
-                >
-                  ◫
+              <div class="panel focus-panel">
+                <div class="panel-heading">
+                  <div>
+                    <span class="small-label muted">ƯU TIÊN TIẾP THEO</span>
+                    <h2>Điều cần chú ý</h2>
+                  </div>
+                  <span class="focus-icon" aria-hidden="true">↗</span>
+                </div>
+                <div id="focus-content"></div>
+                <button class="text-button" id="view-urgent">
+                  Xem nhiệm vụ cần chú ý <span aria-hidden="true">→</span>
                 </button>
               </div>
+            </section>
+            <section class="panel tasks-panel" aria-labelledby="tasks-heading">
+              <div class="panel-heading task-panel-heading">
+                <div>
+                  <h2 id="tasks-heading">Nhiệm vụ của bạn</h2>
+                  <p class="muted" id="result-count" aria-live="polite">
+                    Đang tải dữ liệu…
+                  </p>
+                </div>
+                <div class="task-tools">
+                  <button
+                    class="icon-button"
+                    id="btn-refresh-tasks"
+                    aria-label="Làm mới nhiệm vụ"
+                    title="Làm mới nhiệm vụ"
+                  >
+                    ↻
+                  </button>
+                  <div
+                    class="view-switch"
+                    role="group"
+                    aria-label="Cách hiển thị"
+                  >
+                    <button
+                      data-view="list"
+                      aria-pressed="true"
+                      aria-label="Dạng danh sách"
+                      title="Danh sách"
+                    >
+                      ☷</button
+                    ><button
+                      data-view="board"
+                      aria-pressed="false"
+                      aria-label="Dạng bảng"
+                      title="Bảng trạng thái"
+                    >
+                      ◫
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="filter-bar">
+                <div class="search-field">
+                  <span aria-hidden="true">⌕</span
+                  ><input
+                    type="search"
+                    id="task-search"
+                    aria-label="Tìm nhiệm vụ"
+                    placeholder="Tìm tên, mô tả, môn học…"
+                  />
+                </div>
+                <select id="filter-status" aria-label="Lọc trạng thái">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="TODO">Cần làm</option>
+                  <option value="IN_PROGRESS">Đang làm</option>
+                  <option value="COMPLETED">Hoàn thành</option></select
+                ><select id="filter-priority" aria-label="Lọc ưu tiên">
+                  <option value="">Tất cả ưu tiên</option>
+                  <option value="HIGH">Ưu tiên cao</option>
+                  <option value="MEDIUM">Trung bình</option>
+                  <option value="LOW">Ưu tiên thấp</option></select
+                ><select id="sort-tasks" aria-label="Sắp xếp nhiệm vụ">
+                  <option value="attention">Cần chú ý trước</option>
+                  <option value="due">Hạn gần nhất</option>
+                  <option value="newest">Mới nhất</option>
+                  <option value="title">Tên A–Z</option></select
+                ><button class="text-button" id="clear-filters" hidden>
+                  Xóa bộ lọc
+                </button>
+              </div>
+              <div class="course-filter-bar">
+                <label for="filter-course">Môn học</label>
+                <select id="filter-course" aria-label="Lọc môn học">
+                  <option value="">Tất cả môn học</option>
+                </select>
+                <span
+                  class="date-filter-label"
+                  id="date-filter-label"
+                  hidden
+                ></span>
+              </div>
+              <div class="state-box" id="tasks-loading" role="status" hidden>
+                <span class="spinner"></span>
+                <h3>Đang tải nhiệm vụ…</h3>
+                <p>Đợi một chút, không gian của bạn sắp sẵn sàng.</p>
+              </div>
+              <div class="state-box error-state" id="tasks-error" hidden>
+                <h3>Chưa thể tải nhiệm vụ</h3>
+                <p id="tasks-error-message"></p>
+                <button class="button secondary" id="retry-tasks">
+                  Thử lại
+                </button>
+              </div>
+              <div class="state-box" id="tasks-empty" hidden>
+                <span class="empty-icon" aria-hidden="true">✓</span>
+                <h3 id="empty-title">Chưa có nhiệm vụ nào</h3>
+                <p id="empty-description">
+                  Thêm nhiệm vụ đầu tiên để bắt đầu kế hoạch của bạn.
+                </p>
+                <button class="button secondary" id="empty-action">
+                  Tạo nhiệm vụ đầu tiên
+                </button>
+              </div>
+              <div id="tasks-list" class="tasks-list"></div>
+            </section>
+          </div>
+          <aside class="planner-rail" aria-label="Lịch và deadline">
+            <section
+              class="panel calendar-panel"
+              aria-labelledby="calendar-title"
+            >
+              <div class="panel-heading">
+                <div>
+                  <span class="small-label muted">SẮP XẾP THỜI GIAN</span>
+                  <h2 id="calendar-title">Lịch học tập</h2>
+                </div>
+                <span class="calendar-symbol" aria-hidden="true">▦</span>
+              </div>
+              <div class="calendar-toolbar">
+                <strong id="calendar-month" aria-live="polite"></strong>
+                <div>
+                  <button
+                    class="icon-button"
+                    id="calendar-prev"
+                    aria-label="Tháng trước"
+                  >
+                    ‹</button
+                  ><button
+                    class="icon-button"
+                    id="calendar-next"
+                    aria-label="Tháng sau"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+              <div class="calendar-weekdays" aria-hidden="true">
+                <span>T2</span><span>T3</span><span>T4</span><span>T5</span
+                ><span>T6</span><span>T7</span><span>CN</span>
+              </div>
+              <div
+                class="calendar-days"
+                id="calendar-days"
+                role="group"
+                aria-label="Chọn ngày để lọc nhiệm vụ"
+              ></div>
+              <div class="calendar-footer">
+                <span><i class="dot"></i> Có deadline</span
+                ><button class="text-button" id="calendar-today">
+                  Về hôm nay
+                </button>
+              </div>
+            </section>
+            <section
+              class="panel deadlines-panel"
+              aria-labelledby="deadlines-heading"
+            >
+              <div class="panel-heading">
+                <div>
+                  <span class="small-label muted">ĐỪNG BỎ LỠ</span>
+                  <h2 id="deadlines-heading">Deadline cần nhớ</h2>
+                </div>
+                <span class="deadline-count" id="deadline-count">0</span>
+              </div>
+              <div id="upcoming-deadlines" class="upcoming-deadlines"></div>
+            </section>
+            <div class="study-tip">
+              <span aria-hidden="true">✧</span>
+              <div>
+                <strong>Một chút tập trung, nhiều tiến bộ.</strong>
+                <p>Chia nhỏ nhiệm vụ và bắt đầu từ việc quan trọng nhất nhé.</p>
+              </div>
             </div>
-          </div>
-          <div class="filter-bar">
-            <div class="search-field">
-              <span aria-hidden="true">⌕</span
-              ><input
-                type="search"
-                id="task-search"
-                aria-label="Tìm nhiệm vụ"
-                placeholder="Tìm tên, mô tả, môn học…"
-              />
-            </div>
-            <select id="filter-status" aria-label="Lọc trạng thái">
-              <option value="">Tất cả trạng thái</option>
-              <option value="TODO">Cần làm</option>
-              <option value="IN_PROGRESS">Đang làm</option>
-              <option value="COMPLETED">Hoàn thành</option></select
-            ><select id="filter-priority" aria-label="Lọc ưu tiên">
-              <option value="">Tất cả ưu tiên</option>
-              <option value="HIGH">Ưu tiên cao</option>
-              <option value="MEDIUM">Trung bình</option>
-              <option value="LOW">Ưu tiên thấp</option></select
-            ><select id="sort-tasks" aria-label="Sắp xếp nhiệm vụ">
-              <option value="attention">Cần chú ý trước</option>
-              <option value="due">Hạn gần nhất</option>
-              <option value="newest">Mới nhất</option>
-              <option value="title">Tên A–Z</option></select
-            ><button class="text-button" id="clear-filters" hidden>
-              Xóa bộ lọc
-            </button>
-          </div>
-          <div class="state-box" id="tasks-loading" role="status" hidden>
-            <span class="spinner"></span>
-            <h3>Đang tải nhiệm vụ…</h3>
-            <p>Đợi một chút, không gian của bạn sắp sẵn sàng.</p>
-          </div>
-          <div class="state-box error-state" id="tasks-error" hidden>
-            <h3>Chưa thể tải nhiệm vụ</h3>
-            <p id="tasks-error-message"></p>
-            <button class="button secondary" id="retry-tasks">Thử lại</button>
-          </div>
-          <div class="state-box" id="tasks-empty" hidden>
-            <span class="empty-icon" aria-hidden="true">✓</span>
-            <h3 id="empty-title">Chưa có nhiệm vụ nào</h3>
-            <p id="empty-description">
-              Thêm nhiệm vụ đầu tiên để bắt đầu kế hoạch của bạn.
-            </p>
-            <button class="button secondary" id="empty-action">
-              Tạo nhiệm vụ đầu tiên
-            </button>
-          </div>
-          <div id="tasks-list" class="tasks-list"></div>
-        </section>
+          </aside>
+        </div>
         <footer class="workspace-footer">
           <span>Student Task Manager <span>·</span> SWT301</span
           ><span id="sync-label" aria-live="polite">Chưa đồng bộ</span>

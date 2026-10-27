@@ -47,6 +47,12 @@
   let view = safeRead(localStorage, "stm-view") === "board" ? "board" : "list";
   let page = "overview",
     toastTimer;
+  let selectedDate = "";
+  let calendarMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1,
+  );
   const escape = (value) =>
     String(value ?? "").replace(
       /[&<>"']/g,
@@ -143,6 +149,7 @@
     loaded = false;
     loading = false;
     loadError = "";
+    clearFilters();
     safeWrite(sessionStorage, "token", null);
     safeWrite(sessionStorage, "currentUser", null);
     document
@@ -191,6 +198,10 @@
     $("auth-section").hidden = true;
     $("app-shell").hidden = false;
     $("user-name").textContent = user.fullName || user.username;
+    $("greeting-name").textContent = (user.fullName || user.username)
+      .trim()
+      .split(/\s+/)
+      .pop();
     $("user-email").textContent = user.email || "Sinh viên";
     $("user-avatar").textContent = (user.fullName || user.username)
       .split(" ")
@@ -275,6 +286,7 @@
       },
     );
     $("insights").hidden = page !== "overview";
+    $("welcome-banner").hidden = page !== "overview";
     $("filter-status").disabled = page === "completed";
     $("tasks-heading").textContent =
       page === "completed" ? "Nhiệm vụ đã hoàn thành" : "Nhiệm vụ của bạn";
@@ -289,6 +301,8 @@
     $("task-search").value = "";
     $("filter-status").value = "";
     $("filter-priority").value = "";
+    $("filter-course").value = "";
+    selectedDate = "";
     $("sort-tasks").value = "attention";
     urgentOnly = false;
   }
@@ -318,6 +332,9 @@
       button.addEventListener("click", () => jumpToTasks(button.dataset.stat)),
     );
   $("view-urgent").addEventListener("click", () => jumpToTasks("", true));
+  $("plan-today").addEventListener("click", () =>
+    jumpToTasks("", tasks.some(needsAttention)),
+  );
   $("status-chart").addEventListener("click", (event) => {
     const button = event.target.closest("[data-status]");
     if (button) jumpToTasks(button.dataset.status);
@@ -351,7 +368,150 @@
   }
   $("btn-refresh-tasks").addEventListener("click", fetchTasks);
   $("retry-tasks").addEventListener("click", fetchTasks);
+
+  function syncPlannerSelection() {
+    document.querySelectorAll("[data-calendar-date]").forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.calendarDate === selectedDate),
+      );
+    });
+    document.querySelectorAll("[data-course]").forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.course === $("filter-course").value),
+      );
+    });
+    $("date-filter-label").hidden = !selectedDate;
+    $("date-filter-label").textContent = selectedDate
+      ? `Deadline: ${dueText(selectedDate)}`
+      : "";
+  }
+
+  function renderCourses() {
+    const previous = $("filter-course").value;
+    const courses = [
+      ...new Set(tasks.map((task) => task.course).filter(Boolean)),
+    ].sort((a, b) => a.localeCompare(b, "vi"));
+    $("filter-course").replaceChildren(new Option("Tất cả môn học", ""));
+    courses.forEach((course) =>
+      $("filter-course").add(new Option(course, course)),
+    );
+    if (courses.includes(previous)) $("filter-course").value = previous;
+    $("course-shortcuts").innerHTML = courses.length
+      ? courses
+          .map(
+            (course) =>
+              `<button class="course-shortcut" data-course="${escape(course)}" aria-pressed="false" title="${escape(course)}"><span class="course-dot" aria-hidden="true"></span><span>${escape(course)}</span><b>${tasks.filter((task) => task.course === course).length}</b></button>`,
+          )
+          .join("")
+      : '<p class="muted">Môn học sẽ xuất hiện khi bạn thêm nhiệm vụ.</p>';
+    syncPlannerSelection();
+  }
+
+  function renderCalendar() {
+    const year = calendarMonth.getFullYear(),
+      month = calendarMonth.getMonth();
+    $("calendar-month").textContent = new Intl.DateTimeFormat("vi-VN", {
+      month: "long",
+      year: "numeric",
+    }).format(calendarMonth);
+    const offset = (new Date(year, month, 1).getDay() + 6) % 7;
+    const days = new Date(year, month + 1, 0).getDate();
+    const counts = new Map();
+    tasks.forEach((task) => {
+      if (isDate(task.dueDate))
+        counts.set(task.dueDate, (counts.get(task.dueDate) || 0) + 1);
+    });
+    let html = '<span aria-hidden="true"></span>'.repeat(offset);
+    for (let day = 1; day <= days; day++) {
+      const value = localDay(new Date(year, month, day));
+      const count = counts.get(value) || 0;
+      const today = value === localDay();
+      html += `<button class="calendar-day${today ? " is-today" : ""}${count ? " has-deadline" : ""}" data-calendar-date="${value}" aria-pressed="${value === selectedDate}"${today ? ' aria-current="date"' : ""} aria-label="${dueText(value)}${today ? ", hôm nay" : ""}, ${count} nhiệm vụ">${day}</button>`;
+    }
+    $("calendar-days").innerHTML = html;
+  }
+
+  function renderPlanner() {
+    renderCalendar();
+    const pending = tasks.filter((task) => task.status !== "COMPLETED");
+    const dueToday = pending.filter(
+      (task) => task.dueDate === localDay(),
+    ).length;
+    $("welcome-summary").textContent = pending.length
+      ? `Bạn có ${pending.length} nhiệm vụ đang chờ · ${dueToday} nhiệm vụ đến hạn hôm nay. Cùng bắt đầu nhé!`
+      : "Mọi nhiệm vụ đã hoàn thành. Thêm một mục tiêu mới cho hành trình tiếp theo nhé!";
+    const deadlines = pending
+      .filter((task) => isDate(task.dueDate))
+      .sort(compareDue);
+    $("deadline-count").textContent = deadlines.length;
+    $("upcoming-deadlines").innerHTML = deadlines.length
+      ? deadlines
+          .slice(0, 3)
+          .map((task) => {
+            const date = new Date(task.dueDate + "T12:00:00");
+            const hint = overdue(task)
+              ? "Quá hạn"
+              : task.dueDate === localDay()
+                ? "Đến hạn hôm nay"
+                : "Sắp đến hạn";
+            return `<button class="deadline-item${overdue(task) ? " is-overdue" : ""}" data-deadline-id="${Number(task.id)}" aria-label="Xem nhiệm vụ: ${escape(task.title)}"><span class="deadline-date">${date.getDate()}<small>TH ${date.getMonth() + 1}/${date.getFullYear()}</small></span><span class="deadline-info"><span class="deadline-name">${escape(task.title)}</span><small>${escape(task.course || "Chưa có môn học")} · ${hint}</small></span></button>`;
+          })
+          .join("")
+      : '<p class="planner-empty">Chưa có deadline đang chờ. Bạn có thể đặt hạn khi tạo hoặc sửa nhiệm vụ.</p>';
+  }
+
+  $("course-shortcuts").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-course]");
+    if (!button) return;
+    clearFilters();
+    $("filter-course").value = button.dataset.course;
+    if (location.hash !== "#tasks") location.hash = "tasks";
+    else route();
+  });
+  $("calendar-days").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-calendar-date]");
+    if (!button) return;
+    selectedDate =
+      selectedDate === button.dataset.calendarDate
+        ? ""
+        : button.dataset.calendarDate;
+    if (location.hash !== "#tasks") location.hash = "tasks";
+    else renderTasks();
+  });
+  $("calendar-prev").addEventListener("click", () => {
+    calendarMonth = new Date(
+      calendarMonth.getFullYear(),
+      calendarMonth.getMonth() - 1,
+      1,
+    );
+    renderCalendar();
+  });
+  $("calendar-next").addEventListener("click", () => {
+    calendarMonth = new Date(
+      calendarMonth.getFullYear(),
+      calendarMonth.getMonth() + 1,
+      1,
+    );
+    renderCalendar();
+  });
+  $("calendar-today").addEventListener("click", () => {
+    const now = new Date();
+    calendarMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    renderCalendar();
+  });
+  $("upcoming-deadlines").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-deadline-id]");
+    const task = tasks.find(
+      (item) => item.id === Number(button?.dataset.deadlineId),
+    );
+    if (task && !loading && !saving) showDetail(task);
+  });
+
   function renderStats() {
+    renderCourses();
+    renderPlanner();
     const counts = Object.fromEntries(
       Object.keys(statuses).map((status) => [
         status,
@@ -380,9 +540,9 @@
     $("status-chart").innerHTML = Object.entries(statuses)
       .map(([status, label]) => {
         const color = {
-          TODO: "#a5b9b2",
-          IN_PROGRESS: "#e7a269",
-          COMPLETED: "#3e8a70",
+          TODO: "#b9a7df",
+          IN_PROGRESS: "#7c9be3",
+          COMPLETED: "#60b698",
         }[status];
         const width = tasks.length ? (counts[status] / tasks.length) * 100 : 0;
         return `<button class="chart-row" data-status="${status}" title="${escape(label)}: ${counts[status]} / ${tasks.length} nhiệm vụ (${Math.round(width)}%). Bấm để lọc."><span><i class="dot" style="background:${color}"></i>${label}<b>${counts[status]}</b></span><div class="chart-track"><span class="chart-fill" style="width:${width}%;background:${color}"></span></div></button>`;
@@ -417,10 +577,13 @@
     const query = normalize($("task-search").value.trim()),
       status = page === "completed" ? "COMPLETED" : $("filter-status").value,
       priority = $("filter-priority").value;
+    const course = $("filter-course").value;
     const list = tasks.filter(
       (task) =>
         (!status || task.status === status) &&
         (!priority || task.priority === priority) &&
+        (!course || task.course === course) &&
+        (!selectedDate || task.dueDate === selectedDate) &&
         (!query ||
           normalize(
             `${task.title} ${task.description} ${task.course}`,
@@ -452,6 +615,7 @@
     return `<article class="task-row${complete ? " is-complete" : ""}" data-id="${Number(task.id)}"><button class="task-check${complete ? " is-complete" : ""}" data-action="advance" aria-label="${nextLabel} nhiệm vụ: ${escape(task.title)}" title="${nextLabel}">${complete ? "✓" : task.status === "IN_PROGRESS" ? "◔" : ""}</button><div class="task-main"><button class="task-name" data-action="detail">${escape(task.title)}</button><p class="task-description">${escape(task.description || "Chưa có mô tả.")}</p><div class="task-labels"><span class="course-tag">${escape(task.course || "Chưa có môn học")}</span><span class="priority-tag priority-${escape((task.priority || "MEDIUM").toLowerCase())}">Ưu tiên ${escape((priorities[task.priority] || "Trung bình").toLowerCase())}</span></div></div>${statusTag(task)}<div class="due-date${late ? " is-overdue" : ""}">${escape(dueText(task.dueDate))}<small>${late ? "Quá hạn" : complete ? "Đã hoàn thành" : task.dueDate === localDay() ? "Đến hạn hôm nay" : "Hạn hoàn thành"}</small></div><div class="task-actions"><button data-action="edit" aria-label="Sửa nhiệm vụ: ${escape(task.title)}">Sửa</button><button data-action="delete" aria-label="Xóa nhiệm vụ: ${escape(task.title)}">Xóa</button></div></article>`;
   }
   function renderTasks() {
+    syncPlannerSelection();
     $("tasks-list").hidden = loading || Boolean(loadError);
     $("tasks-loading").hidden = !loading;
     $("tasks-error").hidden = !loadError || loading;
@@ -462,9 +626,11 @@
       !loaded || loading || Boolean(loadError) || saving;
     const hasFilters = Boolean(
       $("task-search").value ||
-      $("filter-status").value ||
-      $("filter-priority").value ||
-      urgentOnly,
+        $("filter-status").value ||
+        $("filter-priority").value ||
+        $("filter-course").value ||
+        selectedDate ||
+        urgentOnly,
     );
     $("clear-filters").hidden = !hasFilters;
     document
@@ -519,12 +685,17 @@
             .join("")
         : list.map(taskCard).join("");
   }
-  ["task-search", "filter-status", "filter-priority", "sort-tasks"].forEach(
-    (id) =>
-      $(id).addEventListener(
-        id === "task-search" ? "input" : "change",
-        renderTasks,
-      ),
+  [
+    "task-search",
+    "filter-status",
+    "filter-priority",
+    "filter-course",
+    "sort-tasks",
+  ].forEach((id) =>
+    $(id).addEventListener(
+      id === "task-search" ? "input" : "change",
+      renderTasks,
+    ),
   );
   $("clear-filters").addEventListener("click", () => {
     clearFilters();

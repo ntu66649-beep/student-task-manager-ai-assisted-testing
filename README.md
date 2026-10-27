@@ -8,9 +8,9 @@ Dự án **AI-Assisted Software Testing** ứng dụng **Playwright**, **Microso
 
 Dự án kế thừa nguyên vẹn hệ thống **Student Task Manager** (Backend Express REST API + Frontend quản lý nhiệm vụ học tập) từ dự án `student-task-manager-api-testing`, đồng thời mở rộng sang phương pháp **Kiểm thử tự động có sự hỗ trợ của AI (AI-Assisted E2E Testing)**:
 
-- **Giữ nguyên 100% giao diện, chức năng và REST API hiện có** của ứng dụng gốc.
+- **Frontend được nâng cấp:** Dashboard tím–trắng, giao diện sáng/tối, lịch deadline tương tác, bộ lọc môn học và bố cục responsive. Các luồng đăng nhập, CRUD nhiệm vụ và REST API tiếp tục được sử dụng.
 - **Khám phá trình duyệt thật bằng AI (Live Browser Exploration):** Kết nối trực tiếp với **Microsoft Playwright MCP (`@playwright/mcp`)** qua giao thức Model Context Protocol để đọc cấu trúc Accessibility Tree của trang web.
-- **Tự động hóa 24 kịch bản E2E Playwright & 15 kịch bản REST API:** Bao phủ đầy đủ các luồng Đăng nhập/Đăng xuất, CRUD Nhiệm vụ, Kiểm tra ràng buộc (Validation), Tìm kiếm tiếng Việt không dấu, Bộ lọc, Sắp xếp, Bảng Kanban, Phân quyền Bearer Token và Xử lý lỗi API (401/400/500).
+- **Tự động hóa 31 kịch bản E2E Playwright & 15 kịch bản REST API:** Gồm 24 kịch bản gốc và 7 kịch bản bổ sung cho lịch, môn học, đồng bộ deadline, responsive và tùy chọn giao diện.
 - **Minh họa quy trình AI phân tích lỗi & sửa Locator (Self-Healing):** Tích hợp kịch bản tạo lỗi locator có kiểm soát, dùng AI đối chiếu log lỗi với DOM/Accessibility Tree để đề xuất cách sửa và yêu cầu kiểm thử viên xác nhận trước khi áp dụng.
 - **100% Công cụ miễn phí, mã nguồn mở:** Không yêu cầu bất kỳ API key trả phí nào.
 
@@ -18,11 +18,21 @@ Dự án kế thừa nguyên vẹn hệ thống **Student Task Manager** (Backen
 
 ## 2. Công nghệ sử dụng
 
+### Không gian học tập mới
+
+- **Tổng quan cá nhân:** Lời chào, số nhiệm vụ đang chờ, số deadline hôm nay và nút chuyển nhanh đến việc cần chú ý.
+- **Lịch học tập:** Đánh dấu ngày có deadline, chuyển tháng/năm, về tháng hiện tại; chọn một ngày để lọc nhiệm vụ trong danh sách hoặc Kanban. Bấm lại ngày đã chọn hoặc **Xóa bộ lọc** để bỏ điều kiện ngày.
+- **Môn học:** Danh sách lấy từ dữ liệu API; lọc bằng dropdown hoặc lối tắt ở sidebar. Kết hợp được với tìm kiếm, trạng thái và ưu tiên.
+- **Deadline cần nhớ:** Hiển thị tối đa 3 nhiệm vụ chưa hoàn thành có hạn sớm nhất, làm nổi bật việc quá hạn. Bấm để mở chi tiết; số liệu cập nhật sau thao tác CRUD.
+- **Sáng/tối và responsive:** Tùy chọn giao diện được lưu trên thiết bị; lịch chuyển xuống dưới nội dung trên tablet/mobile. Kiểm thử ở chiều rộng 360, 390, 768, 1024 và 1440 px.
+
+Frontend tiếp tục dùng HTML/CSS/JavaScript thuần, không thêm thư viện hay bước build. Chạy `npm start` để mở ứng dụng, `npm test` cho 31 E2E và `npm run test:api` cho 15 kiểm thử API. Các tài liệu và artifacts AI testing cũ ghi lại 24 kịch bản ban đầu.
+
 | Thành phần | Công nghệ / Thư viện | Vai trò trong dự án |
 | :--- | :--- | :--- |
 | **Application Backend** | Node.js, Express.js (`^4.21.2`), CORS | Cung cấp RESTful API (`/api/login`, `/api/tasks`, `/api/reset`, `/api/health`) và phục vụ giao diện tĩnh. |
 | **Application Frontend** | HTML5, CSS3, Vanilla JavaScript | Giao diện quản lý nhiệm vụ học tập (Sáng/Tối, Danh sách/Bảng Kanban, `<dialog>` modal, `fetch()` API). |
-| **E2E Testing Framework** | `@playwright/test` (`^1.50.0`) | Thực thi 24 kịch bản kiểm thử tự động trên trình duyệt Chromium thật, xuất HTML Report, Screenshot, Video & Trace. |
+| **E2E Testing Framework** | `@playwright/test` (`^1.50.0`) | Thực thi 31 kịch bản kiểm thử tự động trên trình duyệt Chromium thật, xuất HTML Report, Screenshot, Video & Trace. |
 | **MCP Server chính thức** | `@playwright/mcp` (Microsoft), `@modelcontextprotocol/sdk` | Cung cấp 25 công cụ MCP điều khiển trình duyệt và trích xuất Accessibility Tree cho AI trong Antigravity. |
 | **AI Assistant** | Antigravity AI + Custom MCP Scripts | Phân tích DOM/Accessibility Tree, sinh test script, chẩn đoán log lỗi và đề xuất sửa locator. |
 
@@ -42,8 +52,9 @@ student-task-manager-ai-assisted-testing/
 │   ├── self-healing-evidence.json                # Kết quả AI phân tích lỗi locator và đề xuất sửa
 │   ├── tc08-failure-error-context.md             # Ngữ cảnh lỗi và DOM snapshot khi TC08 bị gãy locator
 │   └── tc08-failure-screenshot.png               # Ảnh chụp màn hình trình duyệt khi TC08 thất bại
-├── public/                                       # Giao diện Website (giữ nguyên từ dự án API Testing)
+├── public/                                       # Giao diện Website được nâng cấp
 │   ├── css/style.css                             # Stylesheet giao diện
+│   ├── css/workspace.css                         # Màu sắc, dashboard, lịch và responsive
 │   ├── js/app.js                                 # Logic kết nối REST API của Frontend
 │   └── index.html                                # Trang đăng nhập & Không gian học tập
 ├── scripts/                                      # Các script phục vụ AI Exploration & Demo Self-Healing
@@ -60,7 +71,8 @@ student-task-manager-ai-assisted-testing/
 │   └── api.test.js                               # 15 bài kiểm thử tự động REST API
 ├── tests/                                        # Bộ kiểm thử tự động Playwright E2E do AI hỗ trợ tạo
 │   └── e2e/
-│       └── student-task-manager.spec.js          # 24 kịch bản kiểm thử E2E trên trình duyệt thật
+│       ├── student-task-manager.spec.js          # 24 kịch bản kiểm thử E2E gốc
+│       └── workspace-planner.spec.js             # 7 kịch bản kiểm thử giao diện và planner
 ├── AI_TEST_CASES.md                              # Tài liệu chi tiết 24 E2E test cases & 15 API test cases
 ├── AI_TESTING_LOG.md                             # Nhật ký tương tác AI, bằng chứng MCP & phân tích lỗi thực tế
 ├── DEMO_GUIDE.md                                 # Kịch bản trình diễn 6 bước trên lớp & câu hỏi vấn đáp SWT301
