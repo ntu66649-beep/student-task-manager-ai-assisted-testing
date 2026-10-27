@@ -685,6 +685,66 @@
         ><button class="button danger" id="confirm-delete">Xóa nhiệm vụ</button>
       </div>
     </dialog>
+    <aside
+      id="pomodoro-widget"
+      class="pomodoro-widget"
+      aria-label="Đồng hồ Pomodoro"
+      hidden
+    >
+      <div class="pomodoro-header">
+        <div>
+          <span class="small-label muted">⏳ Phiên tập trung</span>
+          <strong id="pomodoro-task-name" class="pomodoro-task-name"
+            >Chưa chọn nhiệm vụ</strong
+          >
+        </div>
+        <button
+          type="button"
+          class="icon-button pomodoro-close"
+          id="btn-pomodoro-close"
+          aria-label="Đóng đồng hồ Pomodoro"
+          title="Đóng"
+        >
+          ×
+        </button>
+      </div>
+      <div class="pomodoro-body">
+        <div
+          id="pomodoro-timer-display"
+          class="pomodoro-timer-display"
+          aria-live="polite"
+        >
+          25:00
+        </div>
+        <div class="pomodoro-cycle-badge">
+          ⏳ Chu kỳ hoàn tất: <strong id="pomodoro-cycle-count">0</strong>
+        </div>
+      </div>
+      <div class="pomodoro-controls">
+        <button
+          type="button"
+          class="button primary pomodoro-btn"
+          id="btn-pomodoro-start"
+        >
+          Start
+        </button>
+        <button
+          type="button"
+          class="button secondary pomodoro-btn"
+          id="btn-pomodoro-pause"
+          disabled
+        >
+          Pause
+        </button>
+        <button
+          type="button"
+          class="button secondary pomodoro-btn"
+          id="btn-pomodoro-reset"
+        >
+          Reset
+        </button>
+      </div>
+    </aside>
     <div id="toast" class="toast" role="status" hidden>
       <span id="toast-message"></span
       ><button class="icon-button" id="toast-close" aria-label="Đóng thông báo">
