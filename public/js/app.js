@@ -527,7 +527,7 @@
     const counts = Object.fromEntries(
       Object.keys(statuses).map((status) => [
         status,
-        tasks.filter((task) => String(task.status || "TODO").toUpperCase() === status).length,
+        tasks.filter((task) => task.status === status).length,
       ]),
     );
     $("stat-total").textContent = tasks.length;
@@ -592,8 +592,8 @@
     const course = $("filter-course").value;
     const list = tasks.filter(
       (task) =>
-        (!status || String(task.status || "TODO").toUpperCase() === status) &&
-        (!priority || String(task.priority || "MEDIUM").toUpperCase() === priority) &&
+        (!status || task.status === status) &&
+        (!priority || task.priority === priority) &&
         (!course || task.course === course) &&
         (!selectedDate || task.dueDate === selectedDate) &&
         (!pinnedOnly || pinnedTaskIds.includes(task.id)) &&
@@ -626,7 +626,7 @@
       : task.status === "TODO"
         ? "Bắt đầu"
         : "Hoàn thành";
-return `<article class="task-row${complete ? " is-complete" : ""}" data-id="${Number(task.id)}"><button class="task-check${complete ? " is-complete" : ""}" data-action="advance" aria-label="${nextLabel} nhiệm vụ: ${escape(task.title)}" title="${nextLabel}">${complete ? "✓" : task.status === "IN_PROGRESS" ? "◔" : ""}</button><div class="task-main"><button class="task-name" data-action="detail">${escape(task.title)}</button><p class="task-description">${escape(task.description || "Chưa có mô tả.")}</p><div class="task-labels"><span class="course-tag">${escape(task.course || "Chưa có môn học")}</span><span class="priority-tag priority-${escape((task.priority || "MEDIUM").toLowerCase())}">Ưu tiên ${escape((priorities[task.priority] || "Trung bình").toLowerCase())}</span></div></div>${statusTag(task)}<div class="due-date${late ? " is-overdue" : ""}">${escape(dueText(task.dueDate))}<small>${late ? "Quá hạn" : complete ? "Đã hoàn thành" : task.dueDate === localDay() ? "Đến hạn hôm nay" : "Hạn hoàn thành"}</small></div><div class="task-actions"><button data-action="pin" aria-pressed="${pinned}" aria-label="${pinned ? "Bỏ ghim" : "Ghim"} nhiệm vụ: ${escape(task.title)}" title="${pinned ? "Bỏ ghim" : "Ghim nhiệm vụ"}">${pinned ? "★ Đã ghim" : "☆ Ghim"}</button><button data-action="pomodoro" aria-label="Tập trung: ${escape(task.title)}">⏳ Tập trung</button><button data-action="edit" aria-label="Sửa nhiệm vụ: ${escape(task.title)}">Sửa</button><button data-action="delete" aria-label="Xóa nhiệm vụ: ${escape(task.title)}">Xóa</button></div></article>`;
+    return `<article class="task-row${complete ? " is-complete" : ""}" data-id="${Number(task.id)}"><button class="task-check${complete ? " is-complete" : ""}" data-action="advance" aria-label="${nextLabel} nhiệm vụ: ${escape(task.title)}" title="${nextLabel}">${complete ? "✓" : task.status === "IN_PROGRESS" ? "◔" : ""}</button><div class="task-main"><button class="task-name" data-action="detail">${escape(task.title)}</button><p class="task-description">${escape(task.description || "Chưa có mô tả.")}</p><div class="task-labels"><span class="course-tag">${escape(task.course || "Chưa có môn học")}</span><span class="priority-tag priority-${escape((task.priority || "MEDIUM").toLowerCase())}">Ưu tiên ${escape((priorities[task.priority] || "Trung bình").toLowerCase())}</span></div></div>${statusTag(task)}<div class="due-date${late ? " is-overdue" : ""}">${escape(dueText(task.dueDate))}<small>${late ? "Quá hạn" : complete ? "Đã hoàn thành" : task.dueDate === localDay() ? "Đến hạn hôm nay" : "Hạn hoàn thành"}</small></div><div class="task-actions"><button data-action="pin" aria-pressed="${pinned}" aria-label="${pinned ? "Bỏ ghim" : "Ghim"} nhiệm vụ: ${escape(task.title)}" title="${pinned ? "Bỏ ghim" : "Ghim nhiệm vụ"}">${pinned ? "★ Đã ghim" : "☆ Ghim"}</button><button data-action="edit" aria-label="Sửa nhiệm vụ: ${escape(task.title)}">Sửa</button><button data-action="delete" aria-label="Xóa nhiệm vụ: ${escape(task.title)}">Xóa</button></div></article>`;
   }
   function renderTasks() {
     syncPlannerSelection();
@@ -864,7 +864,7 @@ return `<article class="task-row${complete ? " is-complete" : ""}" data-id="${Nu
     if (!button || !row || saving || loading) return;
     const task = tasks.find((item) => item.id === Number(row.dataset.id));
     if (!task) return;
-if (button.dataset.action === "pin") {
+    if (button.dataset.action === "pin") {
       pinnedTaskIds = pinnedTaskIds.includes(task.id)
         ? pinnedTaskIds.filter((id) => id !== task.id)
         : [...pinnedTaskIds, task.id];
@@ -879,12 +879,6 @@ if (button.dataset.action === "pin") {
           ? "Đã ghim nhiệm vụ."
           : "Đã bỏ ghim nhiệm vụ.",
       );
-      return;
-    }
-    if (button.dataset.action === "pomodoro") {
-      openPomodoroForTask(task, row);
-      return;
-    }
       return;
     }
     if (button.dataset.action === "edit") {
@@ -916,7 +910,7 @@ if (button.dataset.action === "pin") {
         TODO: "IN_PROGRESS",
         IN_PROGRESS: "COMPLETED",
         COMPLETED: "TODO",
-      }[String(task.status || "TODO").toUpperCase()];
+      }[task.status];
       saving = true;
       button.disabled = true;
       const currentGeneration = generation;
@@ -960,93 +954,5 @@ if (button.dataset.action === "pin") {
       renderTasks();
     }
   });
-  const POMODORO_DEFAULT_SECONDS = 25 * 60;
-  let timeLeft = POMODORO_DEFAULT_SECONDS,
-    timerInterval = null,
-    currentTaskId = null,
-    cycleCount = 0;
-
-  function formatPomodoroTime(seconds) {
-    const mins = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
-    const secs = (seconds % 60).toString().padStart(2, "0");
-    return `${mins}:${secs}`;
-  }
-
-  function updatePomodoroDisplay() {
-    $("pomodoro-timer-display").textContent = formatPomodoroTime(timeLeft);
-    $("pomodoro-cycle-count").textContent = String(cycleCount);
-  }
-
-  function stopPomodoroInterval() {
-    if (timerInterval !== null) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-  }
-
-  function resetPomodoroTimer() {
-    stopPomodoroInterval();
-    timeLeft = POMODORO_DEFAULT_SECONDS;
-    updatePomodoroDisplay();
-    $("btn-pomodoro-start").disabled = false;
-    $("btn-pomodoro-pause").disabled = true;
-  }
-
-  function openPomodoroForTask(task, row) {
-    currentTaskId = task ? task.id : Number(row?.dataset.id) || null;
-    const taskTitle =
-      row?.querySelector(".task-name")?.textContent?.trim() ||
-      task?.title ||
-      "Nhiệm vụ";
-    $("pomodoro-task-name").textContent = taskTitle;
-    resetPomodoroTimer();
-    $("pomodoro-widget").hidden = false;
-  }
-
-  $("btn-pomodoro-start").addEventListener("click", () => {
-    if (timerInterval !== null) return;
-    $("btn-pomodoro-start").disabled = true;
-    $("btn-pomodoro-pause").disabled = false;
-    timerInterval = setInterval(() => {
-      if (timeLeft > 0) {
-        timeLeft -= 1;
-        updatePomodoroDisplay();
-      }
-      if (timeLeft <= 0) {
-        stopPomodoroInterval();
-        cycleCount += 1;
-        timeLeft = POMODORO_DEFAULT_SECONDS;
-        updatePomodoroDisplay();
-        $("btn-pomodoro-start").disabled = false;
-        $("btn-pomodoro-pause").disabled = true;
-        toast(
-          `⏳ Hết giờ! Bạn đã hoàn thành 1 chu kỳ tập trung cho: ${$("pomodoro-task-name").textContent}`,
-        );
-      }
-    }, 1000);
-  });
-
-  $("btn-pomodoro-pause").addEventListener("click", () => {
-    stopPomodoroInterval();
-    $("btn-pomodoro-start").disabled = false;
-    $("btn-pomodoro-pause").disabled = true;
-  });
-
-  $("btn-pomodoro-reset").addEventListener("click", () => {
-    resetPomodoroTimer();
-  });
-
-  $("btn-pomodoro-close").addEventListener("click", () => {
-    resetPomodoroTimer();
-    $("pomodoro-widget").hidden = true;
-  });
-
-  $("btn-logout").addEventListener("click", () => {
-    resetPomodoroTimer();
-    $("pomodoro-widget").hidden = true;
-  });
-
   if (token && user) showWorkspace();
 })();
