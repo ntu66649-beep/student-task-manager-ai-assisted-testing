@@ -48,6 +48,16 @@
   let page = "overview",
     toastTimer;
   let selectedDate = "";
+  let pinnedTaskIds = [];
+  try {
+    const storedPins = JSON.parse(
+      safeRead(localStorage, "stm-pinned-tasks") || "[]",
+    );
+    if (Array.isArray(storedPins)) pinnedTaskIds = storedPins.filter(Number.isFinite);
+  } catch {
+    pinnedTaskIds = [];
+  }
+  let pinnedOnly = false;
   let calendarMonth = new Date(
     new Date().getFullYear(),
     new Date().getMonth(),
@@ -302,6 +312,8 @@
     $("filter-status").value = "";
     $("filter-priority").value = "";
     $("filter-course").value = "";
+    pinnedOnly = false;
+    $("filter-pinned").setAttribute("aria-pressed", "false");
     selectedDate = "";
     $("sort-tasks").value = "attention";
     urgentOnly = false;
@@ -584,6 +596,7 @@
         (!priority || task.priority === priority) &&
         (!course || task.course === course) &&
         (!selectedDate || task.dueDate === selectedDate) &&
+        (!pinnedOnly || pinnedTaskIds.includes(task.id)) &&
         (!query ||
           normalize(
             `${task.title} ${task.description} ${task.course}`,
@@ -606,13 +619,14 @@
   }
   function taskCard(task) {
     const complete = task.status === "COMPLETED",
-      late = overdue(task);
+      late = overdue(task),
+      pinned = pinnedTaskIds.includes(task.id);
     const nextLabel = complete
       ? "Mở lại"
       : task.status === "TODO"
         ? "Bắt đầu"
         : "Hoàn thành";
-    return `<article class="task-row${complete ? " is-complete" : ""}" data-id="${Number(task.id)}"><button class="task-check${complete ? " is-complete" : ""}" data-action="advance" aria-label="${nextLabel} nhiệm vụ: ${escape(task.title)}" title="${nextLabel}">${complete ? "✓" : task.status === "IN_PROGRESS" ? "◔" : ""}</button><div class="task-main"><button class="task-name" data-action="detail">${escape(task.title)}</button><p class="task-description">${escape(task.description || "Chưa có mô tả.")}</p><div class="task-labels"><span class="course-tag">${escape(task.course || "Chưa có môn học")}</span><span class="priority-tag priority-${escape((task.priority || "MEDIUM").toLowerCase())}">Ưu tiên ${escape((priorities[task.priority] || "Trung bình").toLowerCase())}</span></div></div>${statusTag(task)}<div class="due-date${late ? " is-overdue" : ""}">${escape(dueText(task.dueDate))}<small>${late ? "Quá hạn" : complete ? "Đã hoàn thành" : task.dueDate === localDay() ? "Đến hạn hôm nay" : "Hạn hoàn thành"}</small></div><div class="task-actions"><button data-action="edit" aria-label="Sửa nhiệm vụ: ${escape(task.title)}">Sửa</button><button data-action="delete" aria-label="Xóa nhiệm vụ: ${escape(task.title)}">Xóa</button></div></article>`;
+    return `<article class="task-row${complete ? " is-complete" : ""}" data-id="${Number(task.id)}"><button class="task-check${complete ? " is-complete" : ""}" data-action="advance" aria-label="${nextLabel} nhiệm vụ: ${escape(task.title)}" title="${nextLabel}">${complete ? "✓" : task.status === "IN_PROGRESS" ? "◔" : ""}</button><div class="task-main"><button class="task-name" data-action="detail">${escape(task.title)}</button><p class="task-description">${escape(task.description || "Chưa có mô tả.")}</p><div class="task-labels"><span class="course-tag">${escape(task.course || "Chưa có môn học")}</span><span class="priority-tag priority-${escape((task.priority || "MEDIUM").toLowerCase())}">Ưu tiên ${escape((priorities[task.priority] || "Trung bình").toLowerCase())}</span></div></div>${statusTag(task)}<div class="due-date${late ? " is-overdue" : ""}">${escape(dueText(task.dueDate))}<small>${late ? "Quá hạn" : complete ? "Đã hoàn thành" : task.dueDate === localDay() ? "Đến hạn hôm nay" : "Hạn hoàn thành"}</small></div><div class="task-actions"><button data-action="pin" aria-pressed="${pinned}" aria-label="${pinned ? "Bỏ ghim" : "Ghim"} nhiệm vụ: ${escape(task.title)}" title="${pinned ? "Bỏ ghim" : "Ghim nhiệm vụ"}">${pinned ? "★ Đã ghim" : "☆ Ghim"}</button><button data-action="edit" aria-label="Sửa nhiệm vụ: ${escape(task.title)}">Sửa</button><button data-action="delete" aria-label="Xóa nhiệm vụ: ${escape(task.title)}">Xóa</button></div></article>`;
   }
   function renderTasks() {
     syncPlannerSelection();
@@ -630,6 +644,7 @@
         $("filter-priority").value ||
         $("filter-course").value ||
         selectedDate ||
+        pinnedOnly ||
         urgentOnly,
     );
     $("clear-filters").hidden = !hasFilters;
@@ -699,6 +714,11 @@
   );
   $("clear-filters").addEventListener("click", () => {
     clearFilters();
+    renderTasks();
+  });
+  $("filter-pinned").addEventListener("click", () => {
+    pinnedOnly = !pinnedOnly;
+    $("filter-pinned").setAttribute("aria-pressed", String(pinnedOnly));
     renderTasks();
   });
   $("empty-action").addEventListener("click", () => {
@@ -844,6 +864,23 @@
     if (!button || !row || saving || loading) return;
     const task = tasks.find((item) => item.id === Number(row.dataset.id));
     if (!task) return;
+    if (button.dataset.action === "pin") {
+      pinnedTaskIds = pinnedTaskIds.includes(task.id)
+        ? pinnedTaskIds.filter((id) => id !== task.id)
+        : [...pinnedTaskIds, task.id];
+      safeWrite(
+        localStorage,
+        "stm-pinned-tasks",
+        JSON.stringify(pinnedTaskIds),
+      );
+      renderTasks();
+      toast(
+        pinnedTaskIds.includes(task.id)
+          ? "Đã ghim nhiệm vụ."
+          : "Đã bỏ ghim nhiệm vụ.",
+      );
+      return;
+    }
     if (button.dataset.action === "edit") {
       openTaskForm(task);
       return;

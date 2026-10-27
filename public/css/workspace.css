@@ -783,6 +783,14 @@ textarea {
   background: var(--surface-soft);
   border-color: transparent;
 }
+.task-actions button[data-action="pin"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.pinned-filter[aria-pressed="true"] {
+  color: var(--accent);
+  font-weight: 700;
+}
 .board {
   gap: 11px;
   padding-top: 17px;
