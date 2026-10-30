@@ -130,7 +130,7 @@
   }
   setTheme(
     safeRead(localStorage, "stm-theme") ||
-      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
+      "light",
   );
   $("theme-toggle").addEventListener("click", () => {
     const theme =
@@ -300,7 +300,7 @@
     $("filter-status").disabled = page === "completed";
     $("tasks-heading").textContent =
       page === "completed" ? "Nhiệm vụ đã hoàn thành" : "Nhiệm vụ của bạn";
-    document.title = `${content[0]} · Student Task Manager`;
+    document.title = `${content[0]} · StudyFlow`;
     document.querySelectorAll("[data-page]").forEach((link) => {
       if (link.dataset.page === page) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
