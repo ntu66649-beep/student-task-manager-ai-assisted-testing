@@ -470,3 +470,63 @@ test.describe('5. Authorization & API Error Handling in UI (TC21 - TC24)', () =>
     expect(resDelete.status()).toBe(401);
   });
 });
+
+
+test.describe('Pomodoro Focus Timer Feature', () => {
+  test.beforeEach(async ({ page, request }) => {
+    await resetAndLogin(page, request);
+  });
+
+  test('TC25: Open Pomodoro widget from task row and verify initial state (task title, 25:00, 0 cycles)', async ({ page }) => {
+    const widget = page.locator('#pomodoro-widget');
+    await expect(widget).toBeHidden();
+
+    const taskRow = page.locator('.task-row[data-id="1"]');
+    const expectedTitle = await taskRow.locator('.task-name').textContent();
+
+    await taskRow.locator('button[data-action="pomodoro"]').click();
+
+    await expect(widget).toBeVisible();
+    await expect(page.locator('#pomodoro-task-name')).toHaveText(expectedTitle || 'On tap ly thuyet SWT301');
+    await expect(page.locator('#pomodoro-timer-display')).toHaveText('25:00');
+    await expect(page.locator('#pomodoro-cycle-count')).toHaveText('0');
+    await expect(page.locator('#btn-pomodoro-start')).toBeEnabled();
+    await expect(page.locator('#btn-pomodoro-pause')).toBeDisabled();
+  });
+
+  test('TC26: Start countdown, Pause timer, and Reset back to 25:00', async ({ page }) => {
+    const taskRow = page.locator('.task-row[data-id="1"]');
+    await taskRow.locator('button[data-action="pomodoro"]').click();
+
+    const timerDisplay = page.locator('#pomodoro-timer-display');
+    const startBtn = page.locator('#btn-pomodoro-start');
+    const pauseBtn = page.locator('#btn-pomodoro-pause');
+    const resetBtn = page.locator('#btn-pomodoro-reset');
+
+    await expect(timerDisplay).toHaveText('25:00');
+
+    // Click Start and verify countdown begins within 1.5s
+    await startBtn.click();
+    await expect(startBtn).toBeDisabled();
+    await expect(pauseBtn).toBeEnabled();
+    await expect(timerDisplay).not.toHaveText('25:00', { timeout: 1500 });
+
+    // Click Pause and verify time remains paused
+    await pauseBtn.click();
+    await expect(startBtn).toBeEnabled();
+    await expect(pauseBtn).toBeDisabled();
+    const pausedTime = await timerDisplay.textContent();
+    await page.waitForTimeout(1100);
+    await expect(timerDisplay).toHaveText(pausedTime || '24:59');
+
+    // Click Reset and verify time returns to 25:00
+    await resetBtn.click();
+    await expect(timerDisplay).toHaveText('25:00');
+    await expect(startBtn).toBeEnabled();
+    await expect(pauseBtn).toBeDisabled();
+
+    // Close widget and verify it hides
+    await page.locator('#btn-pomodoro-close').click();
+    await expect(page.locator('#pomodoro-widget')).toBeHidden();
+  });
+});
